@@ -9,6 +9,7 @@ import android.widget.TextView
 class MainActivity : AppCompatActivity() {
 
     private lateinit var textMessage: TextView
+    private val policyViewComponent: IViewComponent
     private lateinit var ministerController: IMinisterController
     private lateinit var currentPolicy : IPolicy
     private lateinit var city: ICity
@@ -39,39 +40,46 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.button4).setOnClickListener { this.nextMinister() }
         findViewById<Button>(R.id.button5).setOnClickListener { this.previousMinister() }
         this.ministerController = PrimaryGameLoadFactory(repo).GetMinisterController();
+
+        this.city = PrimaryGameLoadFactory(repo).GetCity();
         this.SetPolicy()
+
+        this.policyViewComponent = PolicyViewComponent(R, this.currentPolicy)
+        this.policyViewComponent.Draw();
         textMessage = findViewById(R.id.message)
         navView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
     }
 
     fun SetPolicy()
     {
-        if(this.currentPolicy == null)
-        {
-            this.currentPolicy = this.ministerController.GetCurrentMinister().GetNextPolicy()
-        }
+        this.currentPolicy = this.ministerController.GetCurrentMinister().GetNextPolicy()
     }
 
 
     fun nextMinister()
     {
        this.ministerController.NextMinister()
+       this.SetPolicy()
     }
 
     fun previousMinister()
     {
         this.ministerController.PreviousMinister()
+        this.SetPolicy()
     }
 
     fun acceptPolicy()
     {
         val effectPack = this.currentPolicy.Accept()
         val city.ImplementPolicy(effectPack)
+        this.SetPolicy()
     }
 
     fun declinePolicy()
     {
-
+        val effectPack = this.currentPolicy.Decline()
+        this.city.ImplementPolicy(effectPack)
+        this.SetPolicy()
     }
 
 }

@@ -6,11 +6,11 @@ class BaseMinisterController : IMinisterController{
     lateinit var currentMinister: IMinister
 
     constructor(){
-
+        this.startMinister = BaseMinister()
     }
 
     override fun NextMinister() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        this.currentMinister = this.startMinister
     }
 
     override fun PreviousMinister() {
